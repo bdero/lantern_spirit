@@ -1,0 +1,120 @@
+// The friends' skin: one stylized material for candy vinyl (Juju), soft
+// felt (Mochi), pearl and glass (Nova). Unlit like Lumi's skin, so the whole
+// look is authored here and every friend reads the same in the header, the
+// show, and the games.
+//
+// A wrapped key light blends a shadow tint into the base color (sss widens
+// the wrap so soft materials stay luminous), a sky fill lights the top, and
+// a fresnel rim, a sharp clear-coat highlight, a broad sheen, and an
+// optional thin-film shimmer finish it. `emissive` adds the base color as
+// light for parts that glow (Nova's ring and moon).
+
+material {
+  name: "FriendToy",
+  shading_model: unlit,
+  blending: opaque,
+  culling: back,
+
+  parameters: [
+    { type: vec4, name: base_color, hint: source_color, default: [1.0, 0.36, 0.3, 1.0] },
+    { type: vec4, name: shade_color, hint: source_color, default: [0.55, 0.12, 0.2, 1.0] },
+    { type: vec4, name: rim_color, hint: source_color, default: [1.0, 0.85, 0.75, 1.0] },
+    { type: vec3, name: light_direction, default: [-0.45, 0.75, 0.5] },
+    // How far light wraps around (0 hard, 1 very soft).
+    { type: float, name: sss, hint: range(0, 1, 0.01), default: 0.5 },
+    // Clear-coat highlight strength and tightness.
+    { type: float, name: spec, hint: range(0, 3, 0.01), default: 1.0 },
+    { type: float, name: gloss, hint: range(4, 400, 1), default: 120.0 },
+    { type: float, name: rim, hint: range(0, 2, 0.01), default: 0.4 },
+    // Brighter core facing the viewer, like light scattering through candy.
+    { type: float, name: core, hint: range(0, 1, 0.01), default: 0.2 },
+    // Thin-film shimmer at grazing angles (pearl).
+    { type: float, name: film, hint: range(0, 1, 0.01), default: 0.0 },
+    { type: float, name: emissive, hint: range(0, 6, 0.01), default: 0.0 },
+    // Clear coat: a studio reflection (a softbox and the room) over the color.
+    { type: float, name: coat, hint: range(0, 2, 0.01), default: 0.0 },
+    // Light scattering out of thin edges, in its own warmer color.
+    { type: vec4, name: sss_color, hint: source_color, default: [1.0, 0.6, 0.45, 1.0] },
+    { type: float, name: sss_edge, hint: range(0, 2, 0.01), default: 0.0 },
+    // Glints of sugar inside candy, and fuzz on felt.
+    { type: float, name: sparkle, hint: range(0, 2, 0.01), default: 0.0 },
+    { type: float, name: fuzz, hint: range(0, 1, 0.01), default: 0.0 },
+    { type: float, name: time, default: 0.0 },
+    { type: float, name: glow, hint: range(0, 2, 0.01), default: 1.0 },
+    // Light from the world around (fireworks): rgb is color times intensity,
+    // ambient_dir.xyz points toward the light.
+    { type: vec4, name: ambient_color, default: [0.0, 0.0, 0.0, 0.0] },
+    { type: vec4, name: ambient_dir, default: [0.0, 1.0, 0.0, 0.0] },
+  ],
+}
+
+fragment {
+#include <noise.glsl>
+
+  float Hash3(vec3 p) {
+    return fract(sin(dot(p, vec3(12.9898, 78.233, 37.719))) * 43758.5453);
+  }
+
+  void Surface(inout MaterialInputs material) {
+    vec3 N = GetWorldNormal();
+    vec3 V = GetViewDirection();
+    vec3 L = normalize(material_params.light_direction);
+    float ndv = clamp(dot(N, V), 0.0, 1.0);
+    float fres = pow(1.0 - ndv, 3.0);
+
+    float nl = dot(N, L);
+    float wrap = clamp((nl + material_params.sss) / (1.0 + material_params.sss), 0.0, 1.0);
+    vec3 base = material_params.base_color.rgb;
+    vec3 c = mix(material_params.shade_color.rgb, base, smoothstep(0.0, 1.0, wrap));
+    // Sky fill from above and a little bounce from below.
+    c += base * (0.12 * clamp(N.y, 0.0, 1.0) + 0.04 * clamp(-N.y, 0.0, 1.0));
+    c += base * material_params.core * ndv * ndv;
+    c += material_params.rim_color.rgb * fres * material_params.rim;
+
+    // Thin film: hue rotates with the viewing angle.
+    vec3 film = 0.5 + 0.5 * cos(6.2832 * (vec3(0.0, 0.33, 0.67) + (1.0 - ndv) * 1.4));
+    c = mix(c, c * 0.7 + film * 0.45, material_params.film * (1.0 - ndv * 0.7));
+
+    vec3 H = normalize(L + V);
+    float nh = max(dot(N, H), 0.0);
+    c += vec3(1.0) * material_params.spec * (pow(nh, material_params.gloss) * 1.2 + pow(nh, 10.0) * 0.06);
+
+    // Thin edges glow with scattered light, strongest away from the key.
+    float back = clamp(0.6 - nl * 0.5, 0.0, 1.0);
+    c += material_params.sss_color.rgb * pow(1.0 - ndv, 1.8) * back * material_params.sss_edge;
+
+    // Clear coat: the room reflected, plus a big soft window and its hot core.
+    vec3 R = reflect(-V, N);
+    float coatF = 0.04 + 0.96 * pow(1.0 - ndv, 5.0);
+    vec3 room = mix(vec3(0.03, 0.03, 0.05), vec3(0.55, 0.6, 0.75), smoothstep(-0.25, 0.7, R.y));
+    // The softbox sits with the key light; a strip light rims the far side.
+    float wnd = smoothstep(0.84, 0.91, dot(R, L));
+    float rimWnd = smoothstep(0.9, 0.96, dot(R, normalize(vec3(-L.x, 0.25, L.z))));
+    c += material_params.coat * (room * coatF * 0.6 + vec3(1.0) * (wnd * 0.85 + rimWnd * 0.35));
+
+    // Sugar glints: sparse cells that flash as they catch the light.
+    if (material_params.sparkle > 0.0) {
+      vec3 P = GetWorldPosition();
+      vec3 cell = floor(P * 90.0);
+      float h = Hash3(cell);
+      float tw = 0.5 + 0.5 * sin(material_params.time * 5.0 + h * 40.0 + dot(V, vec3(31.0, 17.0, 23.0)));
+      c += vec3(1.0, 0.95, 0.85) * step(0.992, h) * pow(tw, 6.0) * material_params.sparkle * 2.5 * (0.3 + ndv);
+    }
+    // Felt: fine fuzz breaks up the surface and softens the silhouette.
+    if (material_params.fuzz > 0.0) {
+      vec3 P = GetWorldPosition();
+      float f = NoiseSimplex3(P * 38.0, 3) * 0.5 + 0.5;
+      c *= 1.0 - material_params.fuzz * 0.12 * (1.0 - f);
+      c += material_params.rim_color.rgb * material_params.fuzz * 0.25 * pow(1.0 - ndv, 1.2);
+    }
+
+    c += base * material_params.emissive * material_params.glow;
+
+    vec3 amb = material_params.ambient_color.rgb;
+    float amb_n = max(dot(N, normalize(material_params.ambient_dir.xyz + vec3(1e-5))), 0.0);
+    c += amb * (0.25 + 0.6 * amb_n) * (0.4 + base) + amb * fres * 0.6;
+
+    material.base_color = vec4(c, 1.0);
+    PrepareMaterial(material);
+  }
+}

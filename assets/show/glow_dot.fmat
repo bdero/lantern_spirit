@@ -1,0 +1,39 @@
+// Small lights on the set: windows, string lights, Ferris wheel bulbs, rail
+// lanterns. One instanced draw; each instance carries its color, brightness,
+// and twinkle in instance attributes, and the twinkle runs in the shader.
+
+material {
+  name: "GlowDot",
+  shading_model: unlit,
+  blending: opaque,
+  culling: back,
+  parameters: [
+    { type: float, name: time, default: 0.0 },
+    // Scales every dot, so the show can dim the town during the finale.
+    { type: float, name: master, hint: range(0, 2, 0.01), default: 1.0 },
+  ],
+  instance_attributes: [
+    // rgb: color, a: brightness (past 1.0 for bloom).
+    { type: vec4, name: tint },
+    // x: twinkle speed, y: twinkle depth, z: phase.
+    { type: vec4, name: twinkle },
+  ],
+}
+
+vertex {
+  // The instance attributes ride the generated vertex variants; nothing to
+  // change here.
+  void Vertex(inout VertexInputs vertex) {}
+}
+
+fragment {
+  void Surface(inout MaterialInputs material) {
+    vec4 tint = GetInstanceTint();
+    vec4 tw = GetInstanceTwinkle();
+    float flicker = 1.0 - tw.y * (0.5 + 0.5 * sin(material_params.time * tw.x + tw.z));
+    float ndv = clamp(dot(GetWorldNormal(), GetViewDirection()), 0.0, 1.0);
+    vec3 c = tint.rgb * tint.a * flicker * material_params.master * (0.55 + 0.45 * ndv);
+    material.base_color = vec4(c, 1.0);
+    PrepareMaterial(material);
+  }
+}

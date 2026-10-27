@@ -1,0 +1,53 @@
+name: lantern_spirit
+description: Lantern Spirit, a glowing companion character living inside a park-app screen, built with Flutter Scene.
+publish_to: none
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.11.0
+  flutter: ">=3.47.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  clock: ^1.1.1
+  # flutter_scene master until 0.24.4 is on pub.dev (it adds
+  # BloomSettings.referenceSize, which the header and overlay share).
+  flutter_scene:
+    git:
+      url: https://github.com/bdero/flutter_scene.git
+      path: packages/flutter_scene
+      ref: b8023c6261ed77ed4046d72c86496ed40c96b37b
+  flutter_scene_soloud: ^0.2.0
+  hooks: ^2.0.0
+  http: ^1.6.0
+  shared_preferences: ^2.3.2
+  speech_to_text: ^7.5.0
+  vector_math: ^2.1.4
+
+# flutter_scene_soloud depends on the hosted flutter_scene, so the git pin
+# above also needs an override. Both go once 0.24.4 is on pub.dev.
+dependency_overrides:
+  flutter_scene:
+    git:
+      url: https://github.com/bdero/flutter_scene.git
+      path: packages/flutter_scene
+      ref: b8023c6261ed77ed4046d72c86496ed40c96b37b
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+  shaders:
+    - shaders/screen_warp.frag
+  assets:
+    - flutter_scene_generated/
+    - assets/face_atlas.png
+    - assets/faces/
+    - assets/sfx/
+    - assets/ui/

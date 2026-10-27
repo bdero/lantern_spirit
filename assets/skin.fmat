@@ -1,0 +1,78 @@
+// Lantern Spirit skin: a translucent, softly glowing shell for the head and
+// body. Unlit, so every part of the look is authored here: a wrapped key
+// light, an inner swirl that drifts over time, a fresnel rim that carries the
+// glow (driven past 1.0 so bloom picks it up), and a glassy highlight.
+//
+// The head squishes as a soft body on the CPU (lib/lantern/soft_body.dart),
+// so the surface arrives already deformed with matching normals.
+
+material {
+  name: "LanternSkin",
+  shading_model: unlit,
+  blending: opaque,
+  culling: back,
+
+  parameters: [
+    { type: vec4, name: base_color, hint: source_color, default: [0.45, 0.78, 1.0, 1.0] },
+    { type: vec4, name: rim_color, hint: source_color, default: [0.55, 0.85, 1.0, 1.0] },
+    { type: vec4, name: inner_color, hint: source_color, default: [0.75, 0.6, 1.0, 1.0] },
+    { type: vec3, name: light_direction, default: [-0.45, 0.75, 0.5] },
+    // Overall glow, 1 at rest. Sleep dims it, celebrations push it past 1.
+    { type: float, name: glow, hint: range(0, 2, 0.01), default: 1.0 },
+    { type: float, name: rim_power, hint: range(0.5, 6, 0.1), default: 2.2 },
+    { type: float, name: translucency, hint: range(0, 1, 0.01), default: 0.0 },
+    { type: float, name: time, default: 0.0 },
+    // Light from the world around Lumi (fireworks, a lit room): rgb is the
+    // color times intensity, and ambient_dir.xyz points toward the light.
+    { type: vec4, name: ambient_color, default: [0.0, 0.0, 0.0, 0.0] },
+    { type: vec4, name: ambient_dir, default: [0.0, 1.0, 0.0, 0.0] },
+  ],
+
+}
+
+fragment {
+#include <noise.glsl>
+
+  void Surface(inout MaterialInputs material) {
+    vec3 N = GetWorldNormal();
+    vec3 V = GetViewDirection();
+    vec3 L = normalize(material_params.light_direction);
+    vec3 P = GetWorldPosition();
+    float glow = material_params.glow;
+
+    float ndv = clamp(dot(N, V), 0.0, 1.0);
+    float fres = pow(1.0 - ndv, material_params.rim_power);
+
+    // Wrapped diffuse keeps the dark side luminous, like light passing through.
+    float wrap = dot(N, L) * 0.5 + 0.5;
+    float top = clamp(N.y * 0.5 + 0.5, 0.0, 1.0);
+
+    // A slow swirl inside the shell.
+    vec3 q = P * 1.5 + vec3(0.0, material_params.time * 0.12, material_params.time * 0.05);
+    float swirl = smoothstep(0.25, 1.0, NoiseSimplex3(q + NoiseDomainWarp3(q, 7, 0.6), 11) * 0.5 + 0.5);
+
+    vec3 base = material_params.base_color.rgb;
+    vec3 c = base * (0.28 + 0.62 * wrap + 0.12 * top);
+    // Glow that seems to come from inside: strongest facing the viewer.
+    c += material_params.inner_color.rgb * swirl * swirl * (0.18 + 0.22 * ndv) * glow;
+    c += base * 0.18 * glow * ndv;
+    // The rim carries most of the glow, past 1.0 for bloom.
+    c += material_params.rim_color.rgb * fres * (0.55 + 1.15 * glow);
+    // Translucent variants let the rim swallow more of the body.
+    c = mix(c, material_params.rim_color.rgb * (0.4 + 0.9 * fres) * glow,
+            material_params.translucency * (1.0 - ndv * 0.6));
+
+    // Outside light wraps the shell and catches the rim.
+    vec3 amb = material_params.ambient_color.rgb;
+    float amb_n = max(dot(N, normalize(material_params.ambient_dir.xyz + vec3(1e-5))), 0.0);
+    c += amb * (0.3 + 0.7 * amb_n) + amb * fres * 0.8;
+
+    // A crisp glassy highlight plus a broad soft one.
+    vec3 H = normalize(L + V);
+    float nh = max(dot(N, H), 0.0);
+    c += vec3(1.0) * (pow(nh, 140.0) * 1.4 + pow(nh, 12.0) * 0.08);
+
+    material.base_color = vec4(c, 1.0);
+    PrepareMaterial(material);
+  }
+}

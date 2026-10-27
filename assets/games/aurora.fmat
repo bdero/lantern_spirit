@@ -1,0 +1,40 @@
+// Aurora curtains for Sky Lift's high sky: fine vertical rays that drift and
+// fold over time, green at the hem fading to violet at the top. Additive, so
+// it only ever adds light to the night behind it.
+
+material {
+  name: "Aurora",
+  shading_model: unlit,
+  blending: additive,
+  culling: none,
+
+  parameters: [
+    { type: vec4, name: hem_color, hint: source_color, default: [0.15, 1.0, 0.55, 1.0] },
+    { type: vec4, name: top_color, hint: source_color, default: [0.55, 0.25, 1.0, 1.0] },
+    { type: float, name: intensity, hint: range(0, 4, 0.01), default: 1.0 },
+    { type: float, name: time, default: 0.0 },
+  ],
+}
+
+fragment {
+#include <noise.glsl>
+
+  void Surface(inout MaterialInputs material) {
+    vec2 uv = GetUV0();
+    float t = material_params.time;
+    // The curtain folds slowly side to side; rays run up it.
+    float fold = NoiseSimplex2(vec2(uv.x * 2.5, t * 0.05), 3);
+    float u = uv.x + fold * 0.06;
+    float rays = NoiseSimplex2(vec2(u * 46.0, t * 0.18), 5) * 0.5 + 0.5;
+    rays = pow(rays, 2.6);
+    float sheet = NoiseSimplex2(vec2(u * 7.0, t * 0.08), 7) * 0.5 + 0.5;
+    // Bright hem, long soft fade upward, soft side edges.
+    float h = uv.y;
+    float vertical = smoothstep(0.0, 0.08, h) * (1.0 - smoothstep(0.15, 1.0, h));
+    float sides = smoothstep(0.0, 0.15, uv.x) * smoothstep(1.0, 0.85, uv.x);
+    float a = (0.25 * sheet + 1.1 * rays * sheet) * vertical * sides;
+    vec3 col = mix(material_params.hem_color.rgb, material_params.top_color.rgb, smoothstep(0.1, 0.8, h));
+    material.base_color = vec4(col * a * material_params.intensity, 1.0);
+    PrepareMaterial(material);
+  }
+}

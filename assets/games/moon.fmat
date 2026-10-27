@@ -1,0 +1,40 @@
+// The moon at the top of Sky Lift: a soft glowing disc with darker maria,
+// crater rims, and limb darkening, bright enough to bloom without blowing
+// out to flat white.
+
+material {
+  name: "LiftMoon",
+  shading_model: unlit,
+  blending: opaque,
+  culling: back,
+  parameters: [
+    { type: vec4, name: light_color, hint: source_color, default: [1.0, 0.95, 0.84, 1.0] },
+    { type: vec4, name: mare_color, hint: source_color, default: [0.62, 0.6, 0.66, 1.0] },
+    { type: float, name: brightness, hint: range(0, 4, 0.01), default: 1.4 },
+  ],
+}
+
+fragment {
+#include <noise.glsl>
+
+  void Surface(inout MaterialInputs material) {
+    vec3 N = GetWorldNormal();
+    vec3 V = GetViewDirection();
+    float ndv = clamp(dot(N, V), 0.0, 1.0);
+    // Maria: large soft dark patches.
+    float m = NoiseFbm3(N * 1.6, 3, 4, 2.0, 0.5) * 0.5 + 0.5;
+    float mare = smoothstep(0.52, 0.7, m);
+    // Craters: cells with bright rims and darker floors.
+    float c = NoiseSimplex3(N * 9.0, 7) * 0.5 + 0.5;
+    float rim = smoothstep(0.78, 0.82, c) - smoothstep(0.84, 0.9, c);
+    float floor_ = smoothstep(0.84, 0.92, c);
+    vec3 col = mix(material_params.light_color.rgb, material_params.mare_color.rgb, mare * 0.75);
+    col *= 1.0 - floor_ * 0.18;
+    col += vec3(0.08) * rim;
+    // Limb darkening, then a soft glow at the very edge.
+    col *= 0.62 + 0.38 * pow(ndv, 0.6);
+    col += material_params.light_color.rgb * pow(1.0 - ndv, 4.0) * 0.5;
+    material.base_color = vec4(col * material_params.brightness, 1.0);
+    PrepareMaterial(material);
+  }
+}

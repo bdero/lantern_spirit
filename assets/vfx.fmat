@@ -1,0 +1,52 @@
+// Game effects: every spark, flare, shockwave, puff, trail, speed line, and
+// lightning stroke, in one dynamic mesh built on the CPU each frame
+// (lib/vfx/vfx.dart). Vertex color carries the color and brightness (HDR, so
+// bloom catches it). The texture coordinate picks the shape:
+//   v in [0, 1]  a streak; u runs across it, v along it (0 tail, 1 head)
+//   v in [2, 3]  a soft glow dot
+//   v in [4, 5]  a ring (a shockwave)
+//   v in [6, 7]  a four-point star flare
+//   v in [8, 9]  a soft puff (cloud, smoke)
+// Drawn additively, so overlapping light only ever brightens.
+
+material {
+  name: "GameVfx",
+  shading_model: unlit,
+  blending: additive,
+  culling: none,
+  depth_layer: 2,
+  parameters: [
+    { type: float, name: intensity, hint: range(0, 8, 0.01), default: 1.0 },
+  ],
+}
+
+fragment {
+  void Surface(inout MaterialInputs material) {
+    vec2 uv = GetUV0();
+    vec4 vc = GetVertexColor();
+    float band = floor(uv.y * 0.5);
+    vec2 q = vec2(uv.x, uv.y - band * 2.0) * 2.0 - 1.0;
+    float r2 = dot(q, q);
+    float shape;
+    if (band < 0.5) {
+      // Streak: soft across, brightening toward the head.
+      float across = 1.0 - abs(uv.x * 2.0 - 1.0);
+      shape = across * across * (0.2 + 0.8 * uv.y * uv.y);
+    } else if (band < 1.5) {
+      shape = exp(-r2 * 9.0) * 1.5 + exp(-r2 * 3.0) * 0.4;
+    } else if (band < 2.5) {
+      float r = sqrt(r2);
+      float d = (r - 0.82) / 0.1;
+      shape = exp(-d * d) * smoothstep(1.0, 0.95, r) + exp(-r2 * 4.0) * 0.06;
+    } else if (band < 3.5) {
+      float x = abs(q.x), y = abs(q.y);
+      shape = exp(-x * 26.0) * exp(-y * y * 3.0) + exp(-y * 26.0) * exp(-x * x * 3.0);
+      shape += exp(-r2 * 14.0) * 1.4;
+      shape *= smoothstep(1.0, 0.7, max(x, y));
+    } else {
+      shape = exp(-r2 * 2.6) * smoothstep(1.0, 0.6, sqrt(r2)) * 0.8;
+    }
+    material.base_color = vec4(vc.rgb * vc.a * shape * material_params.intensity, 1.0);
+    PrepareMaterial(material);
+  }
+}

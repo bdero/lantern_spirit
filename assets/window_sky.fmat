@@ -1,0 +1,38 @@
+// The night outside a window: a deep gradient, a soft moon with a halo, and
+// twinkling stars. Unlit and bright enough at the moon to bloom.
+
+material {
+  name: "WindowSky",
+  shading_model: unlit,
+  blending: opaque,
+  culling: none,
+  parameters: [
+    { type: vec4, name: top_color, hint: source_color, default: [0.03, 0.05, 0.16, 1.0] },
+    { type: vec4, name: bottom_color, hint: source_color, default: [0.12, 0.12, 0.32, 1.0] },
+    { type: vec4, name: moon, default: [0.62, 0.68, 0.16, 0.0] },
+    { type: float, name: time, default: 0.0 },
+  ],
+}
+
+fragment {
+  float Hash2(vec2 p) {
+    return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
+  }
+
+  void Surface(inout MaterialInputs material) {
+    vec2 uv = GetUV0();
+    vec3 col = mix(material_params.bottom_color.rgb, material_params.top_color.rgb, uv.y);
+    vec2 cell = floor(uv * 60.0);
+    float h = Hash2(cell);
+    vec2 f = fract(uv * 60.0) - 0.5;
+    float star = step(0.975, h) * smoothstep(0.25, 0.0, length(f));
+    star *= 0.6 + 0.4 * sin(material_params.time * (2.0 + h * 5.0) + h * 30.0);
+    col += vec3(0.9, 0.95, 1.0) * star * 1.6;
+    float d = length(uv - material_params.moon.xy);
+    float r = material_params.moon.z;
+    col += vec3(1.0, 0.95, 0.82) * smoothstep(r, r * 0.92, d) * 2.2;
+    col += vec3(0.6, 0.65, 0.9) * exp(-pow(d / (r * 2.2), 2.0)) * 0.5;
+    material.base_color = vec4(col, 1.0);
+    PrepareMaterial(material);
+  }
+}

@@ -1,0 +1,62 @@
+// Lantern Spirit face: the expression sprite on the thin cap in front of the
+// head. The atlas is a 4x3 grid of expressions; Dart picks the cell and can
+// cross-dissolve from the previous one. A small uv offset makes the eyes
+// glance toward a finger. The cap is deformed with the head on the CPU, so
+// the expression rides every squish.
+
+material {
+  name: "LanternFace",
+  shading_model: unlit,
+  blending: alpha,
+  culling: back,
+  depth_layer: 1,
+
+  parameters: [
+    { type: sampler2d, name: atlas, hint: default_transparent },
+    { type: float, name: frame, default: 1.0 },
+    { type: float, name: prev_frame, default: 1.0 },
+    // 0 shows prev_frame, 1 shows frame.
+    { type: float, name: frame_mix, hint: range(0, 1, 0.01), default: 1.0 },
+    { type: vec2, name: look, default: [0.0, 0.0] },
+    { type: vec4, name: face_color, hint: source_color, default: [1.0, 0.98, 0.92, 1.0] },
+    { type: float, name: glow, hint: range(0, 2, 0.01), default: 1.0 },
+    // 1 for a white sprite tinted by face_color and pushed into a glow
+    // (Lumi, Nova's LEDs); 0 for a colored sprite shown as painted (Juju, Mochi).
+    { type: float, name: tint, hint: range(0, 1, 0.01), default: 1.0 },
+    // Light from the world around Lumi (fireworks, a lit room): rgb is the
+    // color times intensity, and ambient_dir.xyz points toward the light.
+    { type: vec4, name: ambient_color, default: [0.0, 0.0, 0.0, 0.0] },
+    { type: vec4, name: ambient_dir, default: [0.0, 1.0, 0.0, 0.0] },
+  ],
+}
+
+fragment {
+  vec4 SampleCell(float cell, vec2 uv) {
+    float c = floor(cell + 0.5);
+    vec2 origin = vec2(mod(c, 4.0), floor(c / 4.0));
+    return texture(atlas, (origin + uv) / vec2(4.0, 3.0));
+  }
+
+  void Surface(inout MaterialInputs material) {
+    vec2 uv = GetUV0() - material_params.look;
+    // Keep each lookup inside its own cell.
+    vec2 inside = step(vec2(0.002), uv) * step(uv, vec2(0.998));
+    uv = clamp(uv, vec2(0.002), vec2(0.998));
+    vec4 a = SampleCell(material_params.prev_frame, uv);
+    vec4 b = SampleCell(material_params.frame, uv);
+    vec4 s = mix(a, b, material_params.frame_mix) * inside.x * inside.y;
+    if (s.a <= 0.004) {
+      discard;
+    }
+    // A white sprite is tinted and pushed past 1.0 so it glows; a painted
+    // one keeps its colors.
+    vec3 sprite = s.rgb / max(s.a, 1e-4);
+    vec3 lit = material_params.face_color.rgb * sprite * (0.9 + 0.9 * material_params.glow);
+    vec3 rgb = mix(sprite * 0.92, lit, material_params.tint);
+    // World light (fireworks) tints a painted face; it never lifts the ink.
+    vec3 amb = material_params.ambient_color.rgb;
+    rgb += mix(sprite * amb * 0.35, amb * 0.3, material_params.tint);
+    material.base_color = vec4(rgb, s.a);
+    PrepareMaterial(material);
+  }
+}

@@ -1,0 +1,62 @@
+// The lagoon. A dark glossy surface that reflects the scene through a planar
+// capture, broken up by slow ripples. Sampling the capture with an offset
+// that is stretched across the screen's height turns every bright point
+// above the water into a long, shimmering vertical streak, the way lights
+// and fireworks look on real water at night.
+
+material {
+  name: "LagoonWater",
+  shading_model: lit,
+  engine_inputs: [ planar_reflection ],
+  parameters: [
+    { type: vec4, name: deep_color, hint: source_color, default: [0.004, 0.007, 0.018, 1.0] },
+    { type: float, name: time, default: 0.0 },
+    // How far the ripples smear the reflection along the screen's height.
+    { type: float, name: streak, hint: range(0, 0.2, 0.001), default: 0.06 },
+    { type: float, name: wobble, hint: range(0, 0.02, 0.0005), default: 0.004 },
+    { type: float, name: reflectivity, hint: range(0, 2, 0.01), default: 0.85 },
+  ],
+}
+
+fragment {
+#include <noise.glsl>
+
+  void Surface(inout MaterialInputs material) {
+    vec3 P = GetWorldPosition();
+    vec3 V = GetViewDirection();
+    float t = material_params.time;
+
+    // Ripples: long in x, tight in depth, so offsets vary quickly as the eye
+    // moves up the screen.
+    vec2 q = vec2(P.x * 0.35, P.z * 2.2);
+    float n1 = NoiseSimplex2(q + vec2(t * 0.15, t * 0.55), 3);
+    float n2 = NoiseSimplex2(q * 2.3 + vec2(-t * 0.2, t * 0.9), 9);
+    float n = n1 * 0.65 + n2 * 0.35;
+
+    // Farther water streaks a little longer on screen.
+    float far = clamp(length(P.xz) / 160.0, 0.0, 1.0);
+
+    vec4 reflection = vec4(0.0);
+    if (planar_reflection_info.params.x > 0.5) {
+      vec4 clip = planar_reflection_info.view_projection * vec4(P, 1.0);
+      if (clip.w > 0.0) {
+        vec2 uv = vec2(0.5 + 0.5 * clip.x / clip.w, 0.5 - 0.5 * clip.y / clip.w);
+        uv += vec2(n2 * material_params.wobble, n * material_params.streak * (0.6 + 0.8 * far));
+        uv = clamp(uv, vec2(0.001), vec2(0.999));
+        reflection = vec4(texture(planar_reflection, uv).rgb, 1.0);
+      }
+    }
+
+    // Fresnel: grazing views reflect more.
+    vec3 N = vec3(0.0, 1.0, 0.0);
+    float ndv = clamp(dot(N, V), 0.0, 1.0);
+    float fres = 0.02 + 0.98 * pow(1.0 - ndv, 5.0);
+    float k = mix(0.35, 1.0, fres) * material_params.reflectivity;
+
+    material.base_color = material_params.deep_color;
+    material.metallic = 0.0;
+    material.roughness = mix(0.12, 1.0, reflection.a);
+    material.emissive = reflection.rgb * k;
+    PrepareMaterial(material);
+  }
+}

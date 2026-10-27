@@ -1,0 +1,80 @@
+// Nova's hologram: a widget capture (the wait-times card) projected as light.
+// Adapted from the example app's VHS tube (crt_effect.fmat): torn slices
+// that jump sideways, the color channels pulled apart, fine scanlines that
+// roll, a brighter phase band drifting up, flicker, and grain. `on` scans it
+// into being (and back out): a bright line sweeps down the panel, and it
+// glitches hardest while it is still forming. Drawn additively, so it is
+// only ever light.
+
+material {
+  name: "Hologram",
+  shading_model: unlit,
+  blending: additive,
+  culling: none,
+  depth_layer: 2,
+  parameters: [
+    { type: sampler2d, name: screen_texture, hint: default_black },
+    { type: float, name: time, default: 0.0 },
+    { type: float, name: on, hint: range(0, 1, 0.01), default: 1.0 },
+    { type: float, name: glitch, hint: range(0, 2, 0.01), default: 0.35 },
+    { type: float, name: brightness, hint: range(0, 4, 0.01), default: 1.5 },
+  ],
+}
+
+fragment {
+  float Hash(vec2 v) {
+    return fract(sin(dot(v, vec2(89.44, 19.36))) * 22189.22);
+  }
+
+  // The card, linear and premultiplied, black off its edges.
+  vec3 Card(vec2 uv) {
+    if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) {
+      return vec3(0.0);
+    }
+    vec4 c = texture(screen_texture, uv);
+    return pow(c.rgb, vec3(2.2)) * c.a;
+  }
+
+  void Surface(inout MaterialInputs material) {
+    float t = material_params.time;
+    float on = clamp(material_params.on, 0.0, 1.0);
+    vec2 uv = GetUV0();
+    vec3 tint = vec3(0.35, 1.0, 1.25);
+
+    // Scanning into being from the top (v = 0): shown above the sweep, a
+    // bright line at it.
+    float sweep = on * 1.1 - 0.05;
+    float shown = smoothstep(0.015, -0.015, uv.y - sweep);
+    float line = exp(-abs(uv.y - sweep) * 70.0) * (1.0 - smoothstep(0.9, 1.0, on));
+
+    // Glitching hardest while it forms.
+    float g = material_params.glitch + (1.0 - on) * 1.4;
+
+    // Torn slices, jumping sideways now and then; and the odd jolt of the
+    // whole panel.
+    float slice = floor(uv.y * 26.0);
+    float tick = floor(t * 14.0);
+    float tear = step(1.0 - 0.16 * g, Hash(vec2(slice, tick))) * (Hash(vec2(slice + 7.0, tick)) - 0.5) * 0.14 * g;
+    float beat = floor(t * 2.5);
+    float jolt = step(0.82, Hash(vec2(beat, 3.1))) * (Hash(vec2(beat, 9.7)) - 0.5) * 0.06 * (0.4 + g);
+    vec2 p = uv + vec2(tear + jolt, 0.0);
+
+    // The channels pulled apart.
+    float split = 0.003 + 0.012 * g;
+    vec3 col = vec3(Card(p + vec2(split, 0.0)).r, Card(p).g, Card(p - vec2(split, 0.0)).b);
+
+    // Phase lines: fine scanlines rolling down, and a brighter band
+    // drifting up through the picture.
+    float lines = 0.72 + 0.28 * sin(uv.y * 170.0 + t * 24.0);
+    float band = exp(-pow((fract(uv.y + t * 0.45) - 0.5) * 7.0, 2.0));
+    col = col * lines + tint * band * 0.06 + col * band * 0.6;
+
+    // Flicker and grain.
+    float flicker = 0.86 + 0.14 * Hash(vec2(floor(t * 28.0), 1.3));
+    col = col * flicker + tint * (Hash(uv * vec2(310.0, 190.0) + t) - 0.5) * 0.03;
+
+    vec3 light = max(col, vec3(0.0)) * material_params.brightness * shown + tint * line * 1.6;
+    material.base_color = vec4(light * smoothstep(0.0, 0.12, on), 1.0);
+    PrepareMaterial(material);
+  }
+}

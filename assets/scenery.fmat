@@ -1,0 +1,233 @@
+// Scenery for the park map and the friend's room: one material, many
+// surfaces. `pattern` picks the surface, drawn procedurally in world space so
+// planks, cobbles, and grass run continuously across separate pieces:
+//   0 plain   1 wood planks   2 cobblestones   3 grass with tiny flowers
+//   4 woven rug (rings around `center`)   5 plaster   6 canopy stripes
+//   (wedges around `center`)   7 rock   8 path stones (laid along the
+//   strip's own uv: courses across it, curbs at its edges; `center.w` is the
+//   strip's width)   9 plaza stones (rings around `center`)
+// Lighting is authored here too: a sky above and a bounce below, a key
+// light, and up to three warm point lights (lamps, a window, a friend's
+// glow) that pool on floors and walls. Unlit shading model, so everything
+// matches the characters' look.
+
+material {
+  name: "Scenery",
+  shading_model: unlit,
+  blending: opaque,
+  culling: back,
+
+  parameters: [
+    { type: vec4, name: color_a, hint: source_color, default: [0.6, 0.45, 0.3, 1.0] },
+    { type: vec4, name: color_b, hint: source_color, default: [0.45, 0.32, 0.2, 1.0] },
+    { type: vec4, name: color_c, hint: source_color, default: [0.9, 0.5, 0.4, 1.0] },
+    { type: float, name: pattern, default: 0.0 },
+    { type: float, name: scale, default: 1.0 },
+    { type: vec4, name: center, default: [0.0, 0.0, 0.0, 0.0] },
+    { type: vec4, name: key_dir, default: [-0.4, 0.8, -0.45, 0.0] },
+    { type: vec4, name: key_color, default: [0.55, 0.6, 0.85, 1.0] },
+    { type: vec4, name: sky_color, default: [0.22, 0.26, 0.45, 1.0] },
+    { type: vec4, name: ground_color, default: [0.12, 0.08, 0.08, 1.0] },
+    { type: vec4, name: lamp0_pos, default: [0.0, 1.0, 0.0, 0.0] },
+    { type: vec4, name: lamp0_color, default: [0.0, 0.0, 0.0, 1.0] },
+    { type: vec4, name: lamp1_pos, default: [0.0, 1.0, 0.0, 0.0] },
+    { type: vec4, name: lamp1_color, default: [0.0, 0.0, 0.0, 1.0] },
+    { type: vec4, name: lamp2_pos, default: [0.0, 1.0, 0.0, 0.0] },
+    { type: vec4, name: lamp2_color, default: [0.0, 0.0, 0.0, 1.0] },
+    { type: float, name: rim, default: 0.15 },
+    { type: float, name: gloss, default: 0.0 },
+    { type: float, name: emissive, default: 0.0 },
+    // Stylized lighting (the park map): a two-tone key with a soft
+    // terminator and stronger rims (toon), and pieces darkening toward the
+    // ground they stand on (ao). Both 0 for plain lighting.
+    { type: float, name: toon, default: 0.0 },
+    { type: float, name: ao, default: 0.0 },
+    // Baked shadows and occlusion on the ground (the park map): darkness in
+    // red over the world rect (x0, z0, 1 / size), w the strength.
+    { type: sampler2d, name: shade_map, hint: default_black },
+    { type: vec4, name: shade_rect, default: [0.0, 0.0, 0.0, 0.0] },
+  ],
+}
+
+fragment {
+#include <noise.glsl>
+
+  float Hash2(vec2 p) {
+    return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
+  }
+
+  // Voronoi in 2D: x = distance to the nearest point, y = to the second
+  // nearest, z = a stable random value for the nearest cell.
+  vec3 Voronoi(vec2 p) {
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    float d1 = 8.0, d2 = 8.0, id = 0.0;
+    for (int y = -1; y <= 1; y++) {
+      for (int x = -1; x <= 1; x++) {
+        vec2 g = vec2(float(x), float(y));
+        vec2 o = vec2(Hash2(i + g), Hash2(i + g + 17.3)) * 0.8 + 0.1;
+        float d = length(g + o - f);
+        if (d < d1) {
+          d2 = d1;
+          d1 = d;
+          id = Hash2(i + g + 41.7);
+        } else if (d < d2) {
+          d2 = d;
+        }
+      }
+    }
+    return vec3(d1, d2, id);
+  }
+
+  vec3 Lamp(vec4 pos, vec4 color, vec3 P, vec3 N) {
+    if (pos.w <= 0.0) return vec3(0.0);
+    vec3 d = pos.xyz - P;
+    float dist = length(d);
+    float atten = clamp(1.0 - dist / pos.w, 0.0, 1.0);
+    atten *= atten;
+    float nl = dot(N, d / max(dist, 1e-4)) * 0.6 + 0.4;
+    return color.rgb * atten * max(nl, 0.0);
+  }
+
+  void Surface(inout MaterialInputs material) {
+    vec3 N = GetWorldNormal();
+    vec3 V = GetViewDirection();
+    vec3 P = GetWorldPosition();
+    float s = material_params.scale;
+    int pat = int(material_params.pattern + 0.5);
+    vec3 a = material_params.color_a.rgb;
+    vec3 b = material_params.color_b.rgb;
+    vec3 c3 = material_params.color_c.rgb;
+    vec3 albedo = a;
+
+    if (pat == 1) {
+      // Planks along x, each its own shade, with grain and dark seams.
+      float u = P.x * 3.2 * s;
+      float id = floor(u);
+      float f = fract(u);
+      float shade = Hash2(vec2(id, 7.0));
+      float grain = NoiseSimplex2(vec2(P.z * 1.4 * s + id * 13.0, u * 9.0), 3) * 0.5 + 0.5;
+      albedo = mix(b, a, 0.35 + 0.5 * shade) * (0.85 + 0.25 * grain);
+      float ends = step(0.97, fract(P.z * 0.55 * s + shade * 3.0));
+      albedo *= 1.0 - 0.55 * (smoothstep(0.06, 0.0, f) + smoothstep(0.94, 1.0, f) + ends);
+    } else if (pat == 2) {
+      // Cobblestones: Worley cells with mortar between them.
+      // Set stones in staggered rows, each its own shade, rounded at the
+      // corners, with mortar between.
+      vec2 q = P.xz * 5.0 * s;
+      float row = floor(q.y);
+      q.x += mod(row, 2.0) * 0.5 + Hash2(vec2(row, 3.0)) * 0.3;
+      vec2 cell = floor(q);
+      vec2 f = fract(q) - 0.5;
+      vec2 e = max(abs(f) - vec2(0.36, 0.33), 0.0);
+      float corner = length(e);
+      float inside = 1.0 - smoothstep(0.04, 0.1, corner + max(abs(f.x) - 0.44, 0.0) + max(abs(f.y) - 0.42, 0.0));
+      float shade = Hash2(cell);
+      albedo = mix(b, a, 0.35 + 0.65 * shade) * (0.9 + 0.1 * (NoiseSimplex2(q * 3.0, 2) * 0.5 + 0.5));
+      albedo *= 0.9 + 0.14 * (1.0 - length(f) * 1.4);
+      albedo = mix(c3, albedo, inside);
+    } else if (pat == 8 || pat == 9) {
+      // Set stones in courses: across a path (from its uv), or in rings
+      // round the plaza, each stone its own shade, rounded, in mortar.
+      vec2 q;
+      float edge = 1.0;
+      if (pat == 8) {
+        vec2 uv = GetUV0();
+        float w = max(material_params.center.w, 0.01);
+        q = vec2(uv.x * w, uv.y) * 6.0 * s;
+        // Darker, longer curb stones along both edges.
+        edge = min(uv.x, 1.0 - uv.x) * w;
+      } else {
+        vec2 d = P.xz - material_params.center.xz;
+        float rr = length(d);
+        q = vec2(atan(d.y, d.x) * rr, rr) * 6.0 * s;
+      }
+      float row = floor(q.y);
+      q.x += mod(row, 2.0) * 0.5 + Hash2(vec2(row, 3.0)) * 0.3;
+      vec2 cell = floor(q);
+      vec2 f = fract(q) - 0.5;
+      vec2 e = max(abs(f) - vec2(0.36, 0.33), 0.0);
+      float inside = 1.0 - smoothstep(0.04, 0.1, length(e) + max(abs(f.x) - 0.44, 0.0) + max(abs(f.y) - 0.42, 0.0));
+      float shade = Hash2(cell);
+      albedo = mix(b, a, 0.4 + 0.6 * shade) * (0.92 + 0.08 * (NoiseSimplex2(q * 3.0, 2) * 0.5 + 0.5));
+      albedo *= 0.92 + 0.12 * (1.0 - length(f) * 1.4);
+      albedo = mix(c3, albedo, inside);
+      if (pat == 8) {
+        float curb = 1.0 - smoothstep(0.035, 0.05, edge);
+        albedo = mix(albedo, mix(b, c3, 0.35) * 0.85, curb);
+      }
+    } else if (pat == 3) {
+      // Grass: broad, gentle patches of two greens, a faint fine texture,
+      // and tiny flowers.
+      float n = NoiseFbm2(P.xz * 0.45 * s, 9, 3, 2.0, 0.5) * 0.5 + 0.5;
+      float clump = NoiseSimplex2(P.xz * 9.0 * s, 4) * 0.5 + 0.5;
+      albedo = mix(b, a, smoothstep(0.25, 0.8, n)) * (0.95 + 0.08 * clump);
+      vec2 cellId = floor(P.xz * 26.0 * s);
+      float h = Hash2(cellId);
+      if (h > 0.985) {
+        vec2 fp = fract(P.xz * 26.0 * s) - 0.5;
+        float dot_ = smoothstep(0.3, 0.12, length(fp));
+        vec3 flower = mix(vec3(1.0, 0.85, 0.9), mix(c3, vec3(1.0, 0.9, 0.4), step(0.993, h)), step(0.99, h));
+        albedo = mix(albedo, flower, dot_);
+      }
+    } else if (pat == 4) {
+      // Woven rug: rings around the center, a weave, a fringe of shade.
+      vec2 d = P.xz - material_params.center.xz;
+      float r = length(d);
+      float ring = cos(r * 34.0 * s);
+      float band = step(0.5, fract(r * 2.6 * s));
+      vec3 base = mix(a, b, band);
+      base = mix(base, c3, smoothstep(0.75, 0.95, ring) * 0.6);
+      float weave = NoiseSimplex2(vec2(atan(d.y, d.x) * 40.0, r * 60.0), 6) * 0.5 + 0.5;
+      albedo = base * (0.84 + 0.22 * weave);
+    } else if (pat == 5) {
+      float n = NoiseFbm3(P * 2.2 * s, 2, 3, 2.0, 0.5) * 0.5 + 0.5;
+      albedo = mix(b, a, 0.55 + 0.45 * n);
+    } else if (pat == 6) {
+      vec2 d = P.xz - material_params.center.xz;
+      float ang = atan(d.y, d.x) / 6.2832 + 0.5;
+      albedo = mix(a, b, step(0.5, fract(ang * 12.0)));
+    } else if (pat == 7) {
+      float n = NoiseFbm3(P * 1.8 * s, 4, 4, 2.0, 0.5) * 0.5 + 0.5;
+      float ridge = NoiseRidged3(P * 3.0 * s, 8, 3, 2.0, 0.5);
+      albedo = mix(b, a, n) * (0.85 + 0.25 * ridge);
+    }
+
+    // Light: sky above, bounce below, a soft key, and the warm lamps.
+    float up = N.y * 0.5 + 0.5;
+    vec3 ambient = mix(material_params.ground_color.rgb, material_params.sky_color.rgb, up);
+    vec3 L = normalize(material_params.key_dir.xyz);
+    float key = clamp(dot(N, L) * 0.6 + 0.4, 0.0, 1.0);
+    float toon = material_params.toon;
+    if (toon > 0.0) {
+      float band = smoothstep(0.4, 0.56, dot(N, L) * 0.5 + 0.5);
+      key = mix(key, 0.18 + 0.82 * band, toon);
+    }
+    // Baked shadows: the key light is blocked under trees and rides, and
+    // the sky is partly hidden near anything standing on the ground.
+    float shadow = 0.0;
+    vec4 sr = material_params.shade_rect;
+    if (sr.w > 0.0) {
+      shadow = texture(shade_map, (P.xz - sr.xy) * sr.z).r * sr.w * (1.0 - smoothstep(0.02, 0.5, P.y));
+    }
+    vec3 light = ambient * (1.0 - 0.65 * shadow) + material_params.key_color.rgb * key * (1.0 - shadow);
+    light += Lamp(material_params.lamp0_pos, material_params.lamp0_color, P, N);
+    light += Lamp(material_params.lamp1_pos, material_params.lamp1_color, P, N);
+    light += Lamp(material_params.lamp2_pos, material_params.lamp2_color, P, N);
+    // Pieces standing on the ground darken toward their feet; the ground
+    // itself (grass, paths, rugs) does not.
+    if (material_params.ao > 0.0 && pat != 2 && pat != 3 && pat != 4) {
+      light *= mix(1.0 - material_params.ao, 1.0, smoothstep(-0.05, 0.42, P.y));
+    }
+    vec3 col = albedo * light;
+    float ndv = clamp(dot(N, V), 0.0, 1.0);
+    col += material_params.sky_color.rgb * pow(1.0 - ndv, 3.0) * material_params.rim * (1.0 + toon * 2.0);
+    if (material_params.gloss > 0.0) {
+      vec3 H = normalize(L + V);
+      col += material_params.key_color.rgb * pow(max(dot(N, H), 0.0), 60.0) * material_params.gloss;
+    }
+    col += albedo * material_params.emissive;
+    material.base_color = vec4(col, 1.0);
+    PrepareMaterial(material);
+  }
+}

@@ -1,0 +1,26 @@
+// A soft contact shadow: a dark pool under a friend that grounds it on a
+// floor, a pier, or a lily pad. A flat quad with a radial falloff, blended
+// over whatever is under it.
+
+material {
+  name: "ContactShadow",
+  shading_model: unlit,
+  blending: alpha,
+  culling: none,
+  depth_layer: 1,
+  parameters: [
+    { type: vec4, name: color, hint: source_color, default: [0.02, 0.02, 0.06, 1.0] },
+    { type: float, name: opacity, hint: range(0, 1, 0.01), default: 0.5 },
+  ],
+}
+
+fragment {
+  void Surface(inout MaterialInputs material) {
+    vec2 q = GetUV0() * 2.0 - 1.0;
+    float r = length(q);
+    float a = smoothstep(1.0, 0.0, r);
+    a = a * a * (0.6 + 0.4 * smoothstep(0.6, 0.0, r));
+    material.base_color = vec4(material_params.color.rgb, a * material_params.opacity);
+    PrepareMaterial(material);
+  }
+}

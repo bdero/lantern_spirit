@@ -1,0 +1,30 @@
+// Ember glow for the floating hands, the tail wisp, and the sparks. A hot
+// core that cools toward the silhouette, scaled past 1.0 so bloom blooms it.
+
+material {
+  name: "LanternEmber",
+  shading_model: unlit,
+  blending: opaque,
+  culling: back,
+
+  parameters: [
+    { type: vec4, name: ember_color, hint: source_color, default: [1.0, 0.55, 0.18, 1.0] },
+    { type: float, name: intensity, hint: range(0, 6, 0.01), default: 2.2 },
+    // Light from the world around Lumi (fireworks, a lit room): rgb is the
+    // color times intensity, and ambient_dir.xyz points toward the light.
+    { type: vec4, name: ambient_color, default: [0.0, 0.0, 0.0, 0.0] },
+    { type: vec4, name: ambient_dir, default: [0.0, 1.0, 0.0, 0.0] },
+  ],
+}
+
+fragment {
+  void Surface(inout MaterialInputs material) {
+    float ndv = clamp(dot(GetWorldNormal(), GetViewDirection()), 0.0, 1.0);
+    float i = material_params.intensity;
+    vec3 c = material_params.ember_color.rgb * i * (0.45 + 0.75 * ndv * ndv);
+    c += vec3(1.0, 0.95, 0.85) * pow(ndv, 6.0) * i * 0.45;
+    c += material_params.ambient_color.rgb * 0.25;
+    material.base_color = vec4(c, 1.0);
+    PrepareMaterial(material);
+  }
+}

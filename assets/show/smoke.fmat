@@ -1,0 +1,31 @@
+// Smoke left behind by each break: camera-facing puffs with a wispy noise
+// edge. Vertex color is the puff's lit color (the show lights it with the
+// bursts that follow) and its opacity.
+
+material {
+  name: "FireworkSmoke",
+  shading_model: unlit,
+  blending: alpha,
+  culling: none,
+  parameters: [
+    { type: float, name: time, default: 0.0 },
+  ],
+}
+
+fragment {
+#include <noise.glsl>
+
+  void Surface(inout MaterialInputs material) {
+    vec2 uv = GetUV0();
+    vec4 vc = GetVertexColor();
+    vec2 p = uv * 2.0 - 1.0;
+    float r = length(p);
+    float n = NoiseFbm2(uv * 3.0 + vec2(vc.a * 13.0, material_params.time * 0.03), 5, 4, 2.0, 0.5) * 0.5 + 0.5;
+    float a = smoothstep(1.0, 0.15, r + (n - 0.5) * 0.6) * n;
+    if (a * vc.a < 0.003) {
+      discard;
+    }
+    material.base_color = vec4(vc.rgb, a * vc.a);
+    PrepareMaterial(material);
+  }
+}
