@@ -1,5 +1,7 @@
 # Lantern Spirit
 
+**[Try it in your browser](https://bdero.me/lantern_spirit/)**
+
 A glowing companion character that lives in the header of an ordinary
 park-app screen, rendered with Flutter Scene. Everything under the header is
 plain Flutter UI, and the character reacts to it.

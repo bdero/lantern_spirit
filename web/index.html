@@ -31,6 +31,15 @@
 
   <title>Lantern Spirit</title>
   <link rel="manifest" href="manifest.json">
+  <style>
+    html, body { margin: 0; height: 100%; background: #070A15; }
+    body { display: flex; align-items: center; justify-content: center; }
+    /* A phone screen: fills a phone, stays phone-sized on a wide window. */
+    #app { position: relative; width: min(430px, 100vw); height: min(932px, 100vh); overflow: hidden; }
+    @media (min-width: 600px) and (min-height: 600px) {
+      #app { height: min(932px, 100vh - 48px); border-radius: 28px; box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6); }
+    }
+  </style>
 </head>
 <body>
   <!--
@@ -41,6 +50,7 @@
     For more details:
     * https://docs.flutter.dev/platform-integration/web/initialization
   -->
+  <div id="app"></div>
   <!-- SoLoud's web audio module (flutter_soloud). -->
   <script src="assets/packages/flutter_soloud/web/init_soloud.js" defer></script>
   <script src="flutter_bootstrap.js" async></script>
