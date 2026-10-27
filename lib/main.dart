@@ -5,7 +5,7 @@ import 'app/profile.dart';
 import 'app/profile_scope.dart';
 import 'clips/touches.dart';
 import 'ui/palette.dart';
-import 'ui/park_screen.dart';
+import 'ui/loading_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,7 +42,7 @@ class LanternSpiritApp extends StatelessWidget {
         ),
         // Touches drawn over everything, for screen recordings.
         builder: (context, child) => TouchOverlay(child: child!),
-        home: const ParkScreen(),
+        home: const Boot(),
       ),
     );
   }

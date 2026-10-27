@@ -39,6 +39,15 @@
     @media (min-width: 600px) and (min-height: 600px) {
       #app { height: min(932px, 100vh - 48px); border-radius: 28px; box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6); }
     }
+    /* Shown while Flutter downloads, matching the app's own loading screen. */
+    #loader { position: absolute; inset: 0; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #070A15; transition: opacity 0.4s; }
+    #loader.done { opacity: 0; pointer-events: none; }
+    #loader .orb { width: 56px; height: 56px; border-radius: 50%; background: radial-gradient(#DDF3FF 0%, #8FD3FF 45%, rgba(143, 211, 255, 0) 100%); animation: pulse 2.4s ease-in-out infinite; }
+    #loader .title { margin-top: 36px; color: #fff; font: 600 22px/1.2 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; letter-spacing: 0.3px; }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 30px 4px rgba(143, 211, 255, 0.35); }
+      50% { box-shadow: 0 0 50px 10px rgba(143, 211, 255, 0.6); }
+    }
   </style>
 </head>
 <body>
@@ -50,7 +59,26 @@
     For more details:
     * https://docs.flutter.dev/platform-integration/web/initialization
   -->
-  <div id="app"></div>
+  <div id="app"><div id="loader"><div class="orb"></div><div class="title">Lantern Spirit</div></div></div>
+  <script>
+    const app = document.getElementById('app');
+    // Flutter's first frame is its own loading screen, so the page's hands off.
+    window.addEventListener('flutter-first-frame', () => {
+      const loader = document.getElementById('loader');
+      loader.classList.add('done');
+      setTimeout(() => loader.remove(), 500);
+    });
+    // Flutter only hears the pointer while it is over the frame, so a drag
+    // that leaves the frame would freeze there and never see its release.
+    // Capturing the pointer on press keeps its moves and its release coming
+    // to Flutter wherever it goes. Touch is captured implicitly already.
+    app.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'touch' || !(e.target instanceof Element)) return;
+      try {
+        e.target.setPointerCapture(e.pointerId);
+      } catch (_) {}
+    }, true);
+  </script>
   <!-- SoLoud's web audio module (flutter_soloud). -->
   <script src="assets/packages/flutter_soloud/web/init_soloud.js" defer></script>
   <script src="flutter_bootstrap.js" async></script>

@@ -13,6 +13,7 @@ import 'package:vector_math/vector_math.dart' as vm;
 import '../app/scene_clock.dart';
 import '../app/clock.dart';
 import '../app/profile.dart';
+import '../app/preload.dart';
 import '../app/profile_scope.dart';
 import '../app/sfx.dart';
 import '../app/show_route.dart';
@@ -130,7 +131,7 @@ class ParkScreenState extends State<ParkScreen> with TickerProviderStateMixin {
     final c = character;
     if (c == null || _roomLoading || errandActive || _room.isAnimating) return;
     _roomLoading = true;
-    final room = await FriendRoom.build(profile: ProfileScope.read(context), friendName: c.friend.name, onParty: _party);
+    final room = Preload.takeRoom(c.friend.name, onParty: _party) ?? await FriendRoom.build(profile: ProfileScope.read(context), friendName: c.friend.name, onParty: _party);
     _roomLoading = false;
     if (!mounted) return;
     _roomScene?.root.detach();
