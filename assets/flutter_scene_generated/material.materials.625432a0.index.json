@@ -1,0 +1,81 @@
+{
+  "schema": 2,
+  "package": "lantern_spirit",
+  "bundleName": "materials",
+  "shaderBundleFileName": "material.materials.625432a0.shaderbundle",
+  "sidecarFileName": "material.materials.625432a0.fmat.json",
+  "materials": {
+    "Bubble": {
+      "entryName": "Bubble",
+      "source": "assets/bubble.fmat"
+    },
+    "LanternEmber": {
+      "entryName": "LanternEmber",
+      "source": "assets/ember.fmat"
+    },
+    "LanternFace": {
+      "entryName": "LanternFace",
+      "source": "assets/face.fmat"
+    },
+    "Aurora": {
+      "entryName": "Aurora",
+      "source": "assets/games/aurora.fmat"
+    },
+    "LiftCloud": {
+      "entryName": "LiftCloud",
+      "source": "assets/games/cloud.fmat"
+    },
+    "LiftMoon": {
+      "entryName": "LiftMoon",
+      "source": "assets/games/moon.fmat"
+    },
+    "Hologram": {
+      "entryName": "Hologram",
+      "source": "assets/hologram.fmat"
+    },
+    "Scenery": {
+      "entryName": "Scenery",
+      "source": "assets/scenery.fmat"
+    },
+    "ContactShadow": {
+      "entryName": "ContactShadow",
+      "source": "assets/shadow.fmat"
+    },
+    "Firework": {
+      "entryName": "Firework",
+      "source": "assets/show/firework.fmat"
+    },
+    "GlowDot": {
+      "entryName": "GlowDot",
+      "source": "assets/show/glow_dot.fmat"
+    },
+    "LagoonSky": {
+      "entryName": "LagoonSky",
+      "source": "assets/show/lagoon_sky.fmat"
+    },
+    "FireworkSmoke": {
+      "entryName": "FireworkSmoke",
+      "source": "assets/show/smoke.fmat"
+    },
+    "LagoonWater": {
+      "entryName": "LagoonWater",
+      "source": "assets/show/water.fmat"
+    },
+    "LanternSkin": {
+      "entryName": "LanternSkin",
+      "source": "assets/skin.fmat"
+    },
+    "FriendToy": {
+      "entryName": "FriendToy",
+      "source": "assets/toy.fmat"
+    },
+    "GameVfx": {
+      "entryName": "GameVfx",
+      "source": "assets/vfx.fmat"
+    },
+    "WindowSky": {
+      "entryName": "WindowSky",
+      "source": "assets/window_sky.fmat"
+    }
+  }
+}

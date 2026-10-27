@@ -1,0 +1,793 @@
+{
+  "PhysicalOpaque": {
+    "name": "PhysicalOpaque",
+    "framework_varying_schema": 2,
+    "domain": "surface",
+    "shading_model": "physical",
+    "blending": "opaque",
+    "culling": "back",
+    "uniform_block": "MaterialParams",
+    "attributes": [],
+    "parameters": [
+      {
+        "name": "base_color_factor",
+        "type": "vec4",
+        "default": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "metallic_factor",
+        "type": "float",
+        "default": 1.0
+      },
+      {
+        "name": "roughness_factor",
+        "type": "float",
+        "default": 1.0
+      },
+      {
+        "name": "normal_scale",
+        "type": "float",
+        "default": 1.0
+      },
+      {
+        "name": "occlusion_strength",
+        "type": "float",
+        "default": 1.0
+      },
+      {
+        "name": "alpha_mode",
+        "type": "int",
+        "default": 0
+      },
+      {
+        "name": "alpha_cutoff",
+        "type": "float",
+        "default": 0.5
+      },
+      {
+        "name": "emissive_factor",
+        "type": "vec3",
+        "default": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "name": "emissive_strength",
+        "type": "float",
+        "default": 1.0
+      },
+      {
+        "name": "specular_factor",
+        "type": "float",
+        "default": 1.0
+      },
+      {
+        "name": "specular_color_factor",
+        "type": "vec3",
+        "default": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "ior",
+        "type": "float",
+        "default": 1.5
+      },
+      {
+        "name": "clearcoat",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "clearcoat_roughness",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "clearcoat_normal_scale",
+        "type": "vec2",
+        "default": [
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "sheen_color",
+        "type": "vec3",
+        "default": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "name": "sheen_roughness",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "transmission",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "diffuse_transmission",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "diffuse_transmission_color",
+        "type": "vec3",
+        "default": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "thickness",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "attenuation_color",
+        "type": "vec3",
+        "default": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "attenuation_distance",
+        "type": "float",
+        "default": 1000000000.0
+      },
+      {
+        "name": "dispersion",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "iridescence",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "iridescence_ior",
+        "type": "float",
+        "default": 1.3
+      },
+      {
+        "name": "iridescence_thickness_minimum",
+        "type": "float",
+        "default": 100.0
+      },
+      {
+        "name": "iridescence_thickness_maximum",
+        "type": "float",
+        "default": 400.0
+      },
+      {
+        "name": "anisotropy",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "anisotropy_rotation",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "feature_a",
+        "type": "int",
+        "default": 0
+      },
+      {
+        "name": "feature_b",
+        "type": "int",
+        "default": 0
+      },
+      {
+        "name": "feature_c",
+        "type": "int",
+        "default": 0
+      },
+      {
+        "name": "base_color_uv_transform",
+        "type": "vec4",
+        "default": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "base_color_uv_rotation",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "base_color_uv_set",
+        "type": "int",
+        "default": 0
+      },
+      {
+        "name": "metallic_roughness_uv_transform",
+        "type": "vec4",
+        "default": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "metallic_roughness_uv_rotation",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "metallic_roughness_uv_set",
+        "type": "int",
+        "default": 0
+      },
+      {
+        "name": "normal_uv_transform",
+        "type": "vec4",
+        "default": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "normal_uv_rotation",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "normal_uv_set",
+        "type": "int",
+        "default": 0
+      },
+      {
+        "name": "feature_a_uv_transform",
+        "type": "vec4",
+        "default": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "feature_a_uv_rotation",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "feature_a_uv_set",
+        "type": "int",
+        "default": 0
+      },
+      {
+        "name": "feature_b_uv_transform",
+        "type": "vec4",
+        "default": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "feature_b_uv_rotation",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "feature_b_uv_set",
+        "type": "int",
+        "default": 0
+      },
+      {
+        "name": "feature_c_uv_transform",
+        "type": "vec4",
+        "default": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "feature_c_uv_rotation",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "feature_c_uv_set",
+        "type": "int",
+        "default": 0
+      }
+    ],
+    "samplers": [
+      {
+        "name": "base_color_texture",
+        "type": "sampler2D",
+        "hint": {
+          "kind": "default_white"
+        }
+      },
+      {
+        "name": "metallic_roughness_texture",
+        "type": "sampler2D",
+        "hint": {
+          "kind": "default_white"
+        }
+      },
+      {
+        "name": "normal_texture",
+        "type": "sampler2D",
+        "hint": {
+          "kind": "default_normal"
+        }
+      },
+      {
+        "name": "feature_texture_a",
+        "type": "sampler2D",
+        "hint": {
+          "kind": "default_white"
+        }
+      },
+      {
+        "name": "feature_texture_b",
+        "type": "sampler2D",
+        "hint": {
+          "kind": "default_white"
+        }
+      },
+      {
+        "name": "feature_texture_c",
+        "type": "sampler2D",
+        "hint": {
+          "kind": "default_white"
+        }
+      }
+    ]
+  },
+  "PhysicalTransmission": {
+    "name": "PhysicalTransmission",
+    "framework_varying_schema": 2,
+    "domain": "surface",
+    "shading_model": "physical",
+    "blending": "alpha",
+    "culling": "back",
+    "depth_write": true,
+    "engine_inputs": [
+      "scene_color",
+      "filtered_scene_color"
+    ],
+    "uniform_block": "MaterialParams",
+    "attributes": [],
+    "parameters": [
+      {
+        "name": "base_color_factor",
+        "type": "vec4",
+        "default": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "metallic_factor",
+        "type": "float",
+        "default": 1.0
+      },
+      {
+        "name": "roughness_factor",
+        "type": "float",
+        "default": 1.0
+      },
+      {
+        "name": "normal_scale",
+        "type": "float",
+        "default": 1.0
+      },
+      {
+        "name": "occlusion_strength",
+        "type": "float",
+        "default": 1.0
+      },
+      {
+        "name": "alpha_mode",
+        "type": "int",
+        "default": 0
+      },
+      {
+        "name": "alpha_cutoff",
+        "type": "float",
+        "default": 0.5
+      },
+      {
+        "name": "emissive_factor",
+        "type": "vec3",
+        "default": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "name": "emissive_strength",
+        "type": "float",
+        "default": 1.0
+      },
+      {
+        "name": "specular_factor",
+        "type": "float",
+        "default": 1.0
+      },
+      {
+        "name": "specular_color_factor",
+        "type": "vec3",
+        "default": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "ior",
+        "type": "float",
+        "default": 1.5
+      },
+      {
+        "name": "clearcoat",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "clearcoat_roughness",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "clearcoat_normal_scale",
+        "type": "vec2",
+        "default": [
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "sheen_color",
+        "type": "vec3",
+        "default": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "name": "sheen_roughness",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "transmission",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "diffuse_transmission",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "diffuse_transmission_color",
+        "type": "vec3",
+        "default": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "thickness",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "attenuation_color",
+        "type": "vec3",
+        "default": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "attenuation_distance",
+        "type": "float",
+        "default": 1000000000.0
+      },
+      {
+        "name": "dispersion",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "iridescence",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "iridescence_ior",
+        "type": "float",
+        "default": 1.3
+      },
+      {
+        "name": "iridescence_thickness_minimum",
+        "type": "float",
+        "default": 100.0
+      },
+      {
+        "name": "iridescence_thickness_maximum",
+        "type": "float",
+        "default": 400.0
+      },
+      {
+        "name": "anisotropy",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "anisotropy_rotation",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "transmission_texture_kind",
+        "type": "int",
+        "default": 0
+      },
+      {
+        "name": "base_color_uv_transform",
+        "type": "vec4",
+        "default": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "base_color_uv_rotation",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "base_color_uv_set",
+        "type": "int",
+        "default": 0
+      },
+      {
+        "name": "metallic_roughness_uv_transform",
+        "type": "vec4",
+        "default": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "metallic_roughness_uv_rotation",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "metallic_roughness_uv_set",
+        "type": "int",
+        "default": 0
+      },
+      {
+        "name": "normal_uv_transform",
+        "type": "vec4",
+        "default": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "normal_uv_rotation",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "normal_uv_set",
+        "type": "int",
+        "default": 0
+      },
+      {
+        "name": "emissive_uv_transform",
+        "type": "vec4",
+        "default": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "emissive_uv_rotation",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "emissive_uv_set",
+        "type": "int",
+        "default": 0
+      },
+      {
+        "name": "transmission_data_uv_transform",
+        "type": "vec4",
+        "default": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "transmission_data_uv_rotation",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "transmission_data_uv_set",
+        "type": "int",
+        "default": 0
+      }
+    ],
+    "samplers": [
+      {
+        "name": "base_color_texture",
+        "type": "sampler2D",
+        "hint": {
+          "kind": "default_white"
+        }
+      },
+      {
+        "name": "metallic_roughness_texture",
+        "type": "sampler2D",
+        "hint": {
+          "kind": "default_white"
+        }
+      },
+      {
+        "name": "normal_texture",
+        "type": "sampler2D",
+        "hint": {
+          "kind": "default_normal"
+        }
+      },
+      {
+        "name": "emissive_texture",
+        "type": "sampler2D",
+        "hint": {
+          "kind": "default_white"
+        }
+      },
+      {
+        "name": "transmission_data_texture",
+        "type": "sampler2D",
+        "hint": {
+          "kind": "default_white"
+        }
+      }
+    ]
+  },
+  "ShadowCatcher": {
+    "name": "ShadowCatcher",
+    "framework_varying_schema": 2,
+    "domain": "surface",
+    "shading_model": "shadowCatcher",
+    "blending": "alpha",
+    "culling": "back",
+    "uniform_block": "MaterialParams",
+    "attributes": [],
+    "vertex": {
+      "unskinned": "ShadowCatcherUnskinnedVertex",
+      "skinned": "ShadowCatcherSkinnedVertex",
+      "depth": "ShadowCatcherUnskinnedDepthVertex"
+    },
+    "parameters": [
+      {
+        "name": "shadow_color",
+        "type": "vec3",
+        "default": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "hint": {
+          "kind": "source_color"
+        }
+      },
+      {
+        "name": "shadow_intensity",
+        "type": "float",
+        "default": 0.8,
+        "hint": {
+          "kind": "range",
+          "min": 0.0,
+          "max": 1.0,
+          "step": 0.01
+        }
+      },
+      {
+        "name": "ao_strength",
+        "type": "float",
+        "default": 0.5,
+        "hint": {
+          "kind": "range",
+          "min": 0.0,
+          "max": 1.0,
+          "step": 0.01
+        }
+      },
+      {
+        "name": "fade_start",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "fade_end",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "catcher_mode",
+        "type": "int",
+        "default": 0
+      },
+      {
+        "name": "baked_region",
+        "type": "vec4",
+        "default": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      }
+    ],
+    "samplers": [
+      {
+        "name": "baked_shadow_texture",
+        "type": "sampler2D",
+        "hint": {
+          "kind": "default_white"
+        }
+      }
+    ]
+  }
+}

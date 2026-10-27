@@ -1,0 +1,21 @@
+{
+  "schema": 2,
+  "package": "flutter_scene",
+  "bundleName": "physical",
+  "shaderBundleFileName": "material.physical.edbe8621.shaderbundle",
+  "sidecarFileName": "material.physical.edbe8621.fmat.json",
+  "materials": {
+    "PhysicalOpaque": {
+      "entryName": "PhysicalOpaque",
+      "source": "assets/materials/physical_opaque.fmat"
+    },
+    "PhysicalTransmission": {
+      "entryName": "PhysicalTransmission",
+      "source": "assets/materials/physical_transmission.fmat"
+    },
+    "ShadowCatcher": {
+      "entryName": "ShadowCatcher",
+      "source": "assets/materials/shadow_catcher.fmat"
+    }
+  }
+}

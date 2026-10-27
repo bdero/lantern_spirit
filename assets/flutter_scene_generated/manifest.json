@@ -1,0 +1,146 @@
+{
+  "schema": 3,
+  "package": "lantern_spirit",
+  "entries": [
+    {
+      "family": "scene",
+      "id": "assets/accessories/beanie",
+      "file": "scene.beanie.3a40cff0.fsceneb",
+      "stamp": "ec1608b165c3e296",
+      "source": "assets/accessories/beanie.glb"
+    },
+    {
+      "family": "scene",
+      "id": "assets/accessories/cat_ears",
+      "file": "scene.cat_ears.00ea7a8f.fsceneb",
+      "stamp": "8b6b8f6c9c23b521",
+      "source": "assets/accessories/cat_ears.glb"
+    },
+    {
+      "family": "scene",
+      "id": "assets/accessories/flower_crown",
+      "file": "scene.flower_crown.fb9e4197.fsceneb",
+      "stamp": "a58bf29256a6da2f",
+      "source": "assets/accessories/flower_crown.glb"
+    },
+    {
+      "family": "scene",
+      "id": "assets/accessories/headphones",
+      "file": "scene.headphones.f4dc2d43.fsceneb",
+      "stamp": "d32c03d1a5d06255",
+      "source": "assets/accessories/headphones.glb"
+    },
+    {
+      "family": "scene",
+      "id": "assets/accessories/party_hat",
+      "file": "scene.party_hat.7df0321b.fsceneb",
+      "stamp": "110ba3d89d54829a",
+      "source": "assets/accessories/party_hat.glb"
+    },
+    {
+      "family": "scene",
+      "id": "assets/accessories/scarf",
+      "file": "scene.scarf.2c3a181e.fsceneb",
+      "stamp": "f657c53bf7c12b26",
+      "source": "assets/accessories/scarf.glb"
+    },
+    {
+      "family": "scene",
+      "id": "assets/accessories/star_sprout",
+      "file": "scene.star_sprout.12045af3.fsceneb",
+      "stamp": "2d762fe45ace5991",
+      "source": "assets/accessories/star_sprout.glb"
+    },
+    {
+      "family": "scene",
+      "id": "assets/lantern",
+      "file": "scene.lantern.edd73203.fsceneb",
+      "stamp": "5e8c85187aa37504",
+      "source": "assets/lantern.glb"
+    },
+    {
+      "family": "material",
+      "id": "materials",
+      "file": "material.materials.0a4cac36.index.json",
+      "stamp": "f4da97b102c92526",
+      "target": "metalDesktop"
+    },
+    {
+      "family": "material",
+      "id": "materials",
+      "file": "material.materials.625432a0.index.json",
+      "stamp": "9a285e0ab5639315",
+      "target": "metalIos"
+    },
+    {
+      "family": "material",
+      "id": "materials",
+      "file": "material.materials.568c9dd5.index.json",
+      "stamp": "003af4b1772f571c",
+      "target": "openglEs"
+    },
+    {
+      "family": "material",
+      "id": "materials",
+      "file": "material.materials.005b8b3a.index.json",
+      "stamp": "345d535c4bf60217",
+      "target": "openglEs,vulkan"
+    },
+    {
+      "family": "material",
+      "id": "materials#shaderbundle",
+      "file": "material.materials.0a4cac36.shaderbundle",
+      "stamp": "f4da97b102c92526",
+      "target": "metalDesktop"
+    },
+    {
+      "family": "material",
+      "id": "materials#shaderbundle",
+      "file": "material.materials.625432a0.shaderbundle",
+      "stamp": "9a285e0ab5639315",
+      "target": "metalIos"
+    },
+    {
+      "family": "material",
+      "id": "materials#shaderbundle",
+      "file": "material.materials.568c9dd5.shaderbundle",
+      "stamp": "003af4b1772f571c",
+      "target": "openglEs"
+    },
+    {
+      "family": "material",
+      "id": "materials#shaderbundle",
+      "file": "material.materials.005b8b3a.shaderbundle",
+      "stamp": "345d535c4bf60217",
+      "target": "openglEs,vulkan"
+    },
+    {
+      "family": "material",
+      "id": "materials#sidecar",
+      "file": "material.materials.0a4cac36.fmat.json",
+      "stamp": "f4da97b102c92526",
+      "target": "metalDesktop"
+    },
+    {
+      "family": "material",
+      "id": "materials#sidecar",
+      "file": "material.materials.625432a0.fmat.json",
+      "stamp": "9a285e0ab5639315",
+      "target": "metalIos"
+    },
+    {
+      "family": "material",
+      "id": "materials#sidecar",
+      "file": "material.materials.568c9dd5.fmat.json",
+      "stamp": "003af4b1772f571c",
+      "target": "openglEs"
+    },
+    {
+      "family": "material",
+      "id": "materials#sidecar",
+      "file": "material.materials.005b8b3a.fmat.json",
+      "stamp": "345d535c4bf60217",
+      "target": "openglEs,vulkan"
+    }
+  ]
+}

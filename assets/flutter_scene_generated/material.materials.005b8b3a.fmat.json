@@ -1,0 +1,1340 @@
+{
+  "Bubble": {
+    "name": "Bubble",
+    "framework_varying_schema": 2,
+    "domain": "surface",
+    "shading_model": "unlit",
+    "blending": "additive",
+    "culling": "none",
+    "depth_layer": 2,
+    "uniform_block": "MaterialParams",
+    "attributes": [],
+    "parameters": [
+      {
+        "name": "time",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "fade",
+        "type": "float",
+        "default": 1.0,
+        "hint": {
+          "kind": "range",
+          "min": 0.0,
+          "max": 1.0,
+          "step": 0.01
+        }
+      },
+      {
+        "name": "core_color",
+        "type": "vec4",
+        "default": [
+          1.0,
+          0.62,
+          0.3,
+          1.0
+        ],
+        "hint": {
+          "kind": "source_color"
+        }
+      },
+      {
+        "name": "core",
+        "type": "float",
+        "default": 1.0,
+        "hint": {
+          "kind": "range",
+          "min": 0.0,
+          "max": 4.0,
+          "step": 0.01
+        }
+      }
+    ],
+    "samplers": []
+  },
+  "LanternEmber": {
+    "name": "LanternEmber",
+    "framework_varying_schema": 2,
+    "domain": "surface",
+    "shading_model": "unlit",
+    "blending": "opaque",
+    "culling": "back",
+    "uniform_block": "MaterialParams",
+    "attributes": [],
+    "parameters": [
+      {
+        "name": "ember_color",
+        "type": "vec4",
+        "default": [
+          1.0,
+          0.55,
+          0.18,
+          1.0
+        ],
+        "hint": {
+          "kind": "source_color"
+        }
+      },
+      {
+        "name": "intensity",
+        "type": "float",
+        "default": 2.2,
+        "hint": {
+          "kind": "range",
+          "min": 0.0,
+          "max": 6.0,
+          "step": 0.01
+        }
+      },
+      {
+        "name": "ambient_color",
+        "type": "vec4",
+        "default": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "name": "ambient_dir",
+        "type": "vec4",
+        "default": [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ]
+      }
+    ],
+    "samplers": []
+  },
+  "LanternFace": {
+    "name": "LanternFace",
+    "framework_varying_schema": 2,
+    "domain": "surface",
+    "shading_model": "unlit",
+    "blending": "alpha",
+    "culling": "back",
+    "depth_layer": 1,
+    "uniform_block": "MaterialParams",
+    "attributes": [],
+    "parameters": [
+      {
+        "name": "frame",
+        "type": "float",
+        "default": 1.0
+      },
+      {
+        "name": "prev_frame",
+        "type": "float",
+        "default": 1.0
+      },
+      {
+        "name": "frame_mix",
+        "type": "float",
+        "default": 1.0,
+        "hint": {
+          "kind": "range",
+          "min": 0.0,
+          "max": 1.0,
+          "step": 0.01
+        }
+      },
+      {
+        "name": "look",
+        "type": "vec2",
+        "default": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "name": "face_color",
+        "type": "vec4",
+        "default": [
+          1.0,
+          0.98,
+          0.92,
+          1.0
+        ],
+        "hint": {
+          "kind": "source_color"
+        }
+      },
+      {
+        "name": "glow",
+        "type": "float",
+        "default": 1.0,
+        "hint": {
+          "kind": "range",
+          "min": 0.0,
+          "max": 2.0,
+          "step": 0.01
+        }
+      },
+      {
+        "name": "tint",
+        "type": "float",
+        "default": 1.0,
+        "hint": {
+          "kind": "range",
+          "min": 0.0,
+          "max": 1.0,
+          "step": 0.01
+        }
+      },
+      {
+        "name": "ambient_color",
+        "type": "vec4",
+        "default": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "name": "ambient_dir",
+        "type": "vec4",
+        "default": [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ]
+      }
+    ],
+    "samplers": [
+      {
+        "name": "atlas",
+        "type": "sampler2D",
+        "hint": {
+          "kind": "default_transparent"
+        }
+      }
+    ]
+  },
+  "Aurora": {
+    "name": "Aurora",
+    "framework_varying_schema": 2,
+    "domain": "surface",
+    "shading_model": "unlit",
+    "blending": "additive",
+    "culling": "none",
+    "uniform_block": "MaterialParams",
+    "attributes": [],
+    "parameters": [
+      {
+        "name": "hem_color",
+        "type": "vec4",
+        "default": [
+          0.15,
+          1.0,
+          0.55,
+          1.0
+        ],
+        "hint": {
+          "kind": "source_color"
+        }
+      },
+      {
+        "name": "top_color",
+        "type": "vec4",
+        "default": [
+          0.55,
+          0.25,
+          1.0,
+          1.0
+        ],
+        "hint": {
+          "kind": "source_color"
+        }
+      },
+      {
+        "name": "intensity",
+        "type": "float",
+        "default": 1.0,
+        "hint": {
+          "kind": "range",
+          "min": 0.0,
+          "max": 4.0,
+          "step": 0.01
+        }
+      },
+      {
+        "name": "time",
+        "type": "float",
+        "default": 0.0
+      }
+    ],
+    "samplers": []
+  },
+  "LiftCloud": {
+    "name": "LiftCloud",
+    "framework_varying_schema": 2,
+    "domain": "surface",
+    "shading_model": "unlit",
+    "blending": "opaque",
+    "culling": "back",
+    "uniform_block": "MaterialParams",
+    "attributes": [],
+    "parameters": [
+      {
+        "name": "lit_color",
+        "type": "vec4",
+        "default": [
+          1.0,
+          0.86,
+          0.9,
+          1.0
+        ],
+        "hint": {
+          "kind": "source_color"
+        }
+      },
+      {
+        "name": "shade_color",
+        "type": "vec4",
+        "default": [
+          0.55,
+          0.5,
+          0.78,
+          1.0
+        ],
+        "hint": {
+          "kind": "source_color"
+        }
+      },
+      {
+        "name": "sun_dir",
+        "type": "vec4",
+        "default": [
+          0.7,
+          0.2,
+          -0.5,
+          0.0
+        ]
+      }
+    ],
+    "samplers": []
+  },
+  "LiftMoon": {
+    "name": "LiftMoon",
+    "framework_varying_schema": 2,
+    "domain": "surface",
+    "shading_model": "unlit",
+    "blending": "opaque",
+    "culling": "back",
+    "uniform_block": "MaterialParams",
+    "attributes": [],
+    "parameters": [
+      {
+        "name": "light_color",
+        "type": "vec4",
+        "default": [
+          1.0,
+          0.95,
+          0.84,
+          1.0
+        ],
+        "hint": {
+          "kind": "source_color"
+        }
+      },
+      {
+        "name": "mare_color",
+        "type": "vec4",
+        "default": [
+          0.62,
+          0.6,
+          0.66,
+          1.0
+        ],
+        "hint": {
+          "kind": "source_color"
+        }
+      },
+      {
+        "name": "brightness",
+        "type": "float",
+        "default": 1.4,
+        "hint": {
+          "kind": "range",
+          "min": 0.0,
+          "max": 4.0,
+          "step": 0.01
+        }
+      }
+    ],
+    "samplers": []
+  },
+  "Hologram": {
+    "name": "Hologram",
+    "framework_varying_schema": 2,
+    "domain": "surface",
+    "shading_model": "unlit",
+    "blending": "additive",
+    "culling": "none",
+    "depth_layer": 2,
+    "uniform_block": "MaterialParams",
+    "attributes": [],
+    "parameters": [
+      {
+        "name": "time",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "on",
+        "type": "float",
+        "default": 1.0,
+        "hint": {
+          "kind": "range",
+          "min": 0.0,
+          "max": 1.0,
+          "step": 0.01
+        }
+      },
+      {
+        "name": "glitch",
+        "type": "float",
+        "default": 0.35,
+        "hint": {
+          "kind": "range",
+          "min": 0.0,
+          "max": 2.0,
+          "step": 0.01
+        }
+      },
+      {
+        "name": "brightness",
+        "type": "float",
+        "default": 1.5,
+        "hint": {
+          "kind": "range",
+          "min": 0.0,
+          "max": 4.0,
+          "step": 0.01
+        }
+      }
+    ],
+    "samplers": [
+      {
+        "name": "screen_texture",
+        "type": "sampler2D",
+        "hint": {
+          "kind": "default_black"
+        }
+      }
+    ]
+  },
+  "Scenery": {
+    "name": "Scenery",
+    "framework_varying_schema": 2,
+    "domain": "surface",
+    "shading_model": "unlit",
+    "blending": "opaque",
+    "culling": "back",
+    "uniform_block": "MaterialParams",
+    "attributes": [],
+    "parameters": [
+      {
+        "name": "color_a",
+        "type": "vec4",
+        "default": [
+          0.6,
+          0.45,
+          0.3,
+          1.0
+        ],
+        "hint": {
+          "kind": "source_color"
+        }
+      },
+      {
+        "name": "color_b",
+        "type": "vec4",
+        "default": [
+          0.45,
+          0.32,
+          0.2,
+          1.0
+        ],
+        "hint": {
+          "kind": "source_color"
+        }
+      },
+      {
+        "name": "color_c",
+        "type": "vec4",
+        "default": [
+          0.9,
+          0.5,
+          0.4,
+          1.0
+        ],
+        "hint": {
+          "kind": "source_color"
+        }
+      },
+      {
+        "name": "pattern",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "scale",
+        "type": "float",
+        "default": 1.0
+      },
+      {
+        "name": "center",
+        "type": "vec4",
+        "default": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "name": "key_dir",
+        "type": "vec4",
+        "default": [
+          -0.4,
+          0.8,
+          -0.45,
+          0.0
+        ]
+      },
+      {
+        "name": "key_color",
+        "type": "vec4",
+        "default": [
+          0.55,
+          0.6,
+          0.85,
+          1.0
+        ]
+      },
+      {
+        "name": "sky_color",
+        "type": "vec4",
+        "default": [
+          0.22,
+          0.26,
+          0.45,
+          1.0
+        ]
+      },
+      {
+        "name": "ground_color",
+        "type": "vec4",
+        "default": [
+          0.12,
+          0.08,
+          0.08,
+          1.0
+        ]
+      },
+      {
+        "name": "lamp0_pos",
+        "type": "vec4",
+        "default": [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "name": "lamp0_color",
+        "type": "vec4",
+        "default": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "name": "lamp1_pos",
+        "type": "vec4",
+        "default": [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "name": "lamp1_color",
+        "type": "vec4",
+        "default": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "name": "lamp2_pos",
+        "type": "vec4",
+        "default": [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "name": "lamp2_color",
+        "type": "vec4",
+        "default": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "name": "rim",
+        "type": "float",
+        "default": 0.15
+      },
+      {
+        "name": "gloss",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "emissive",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "toon",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "ao",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "shade_rect",
+        "type": "vec4",
+        "default": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    ],
+    "samplers": [
+      {
+        "name": "shade_map",
+        "type": "sampler2D",
+        "hint": {
+          "kind": "default_black"
+        }
+      }
+    ]
+  },
+  "ContactShadow": {
+    "name": "ContactShadow",
+    "framework_varying_schema": 2,
+    "domain": "surface",
+    "shading_model": "unlit",
+    "blending": "alpha",
+    "culling": "none",
+    "depth_layer": 1,
+    "uniform_block": "MaterialParams",
+    "attributes": [],
+    "parameters": [
+      {
+        "name": "color",
+        "type": "vec4",
+        "default": [
+          0.02,
+          0.02,
+          0.06,
+          1.0
+        ],
+        "hint": {
+          "kind": "source_color"
+        }
+      },
+      {
+        "name": "opacity",
+        "type": "float",
+        "default": 0.5,
+        "hint": {
+          "kind": "range",
+          "min": 0.0,
+          "max": 1.0,
+          "step": 0.01
+        }
+      }
+    ],
+    "samplers": []
+  },
+  "Firework": {
+    "name": "Firework",
+    "framework_varying_schema": 2,
+    "domain": "surface",
+    "shading_model": "unlit",
+    "blending": "additive",
+    "culling": "none",
+    "uniform_block": "MaterialParams",
+    "attributes": [],
+    "parameters": [
+      {
+        "name": "intensity",
+        "type": "float",
+        "default": 1.0,
+        "hint": {
+          "kind": "range",
+          "min": 0.0,
+          "max": 8.0,
+          "step": 0.01
+        }
+      }
+    ],
+    "samplers": []
+  },
+  "GlowDot": {
+    "name": "GlowDot",
+    "framework_varying_schema": 2,
+    "domain": "surface",
+    "shading_model": "unlit",
+    "blending": "opaque",
+    "culling": "back",
+    "uniform_block": "MaterialParams",
+    "attributes": [],
+    "instance_attributes": [
+      {
+        "name": "tint",
+        "type": "vec4",
+        "offset": 80
+      },
+      {
+        "name": "twinkle",
+        "type": "vec4",
+        "offset": 96
+      }
+    ],
+    "instance_record_bytes": 112,
+    "vertex": {
+      "unskinned": "GlowDotUnskinnedVertex",
+      "skinned": "GlowDotSkinnedVertex",
+      "depth": "GlowDotUnskinnedDepthVertex"
+    },
+    "parameters": [
+      {
+        "name": "time",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "master",
+        "type": "float",
+        "default": 1.0,
+        "hint": {
+          "kind": "range",
+          "min": 0.0,
+          "max": 2.0,
+          "step": 0.01
+        }
+      }
+    ],
+    "samplers": []
+  },
+  "LagoonSky": {
+    "name": "LagoonSky",
+    "framework_varying_schema": 2,
+    "domain": "sky",
+    "shading_model": "lit",
+    "blending": "opaque",
+    "culling": "back",
+    "uniform_block": "MaterialParams",
+    "attributes": [],
+    "parameters": [
+      {
+        "name": "time",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "horizon_color",
+        "type": "vec4",
+        "default": [
+          0.085,
+          0.052,
+          0.17,
+          1.0
+        ]
+      },
+      {
+        "name": "zenith_color",
+        "type": "vec4",
+        "default": [
+          0.004,
+          0.008,
+          0.028,
+          1.0
+        ]
+      },
+      {
+        "name": "star_brightness",
+        "type": "float",
+        "default": 1.0,
+        "hint": {
+          "kind": "range",
+          "min": 0.0,
+          "max": 3.0,
+          "step": 0.01
+        }
+      },
+      {
+        "name": "flash_dir",
+        "type": "vec4",
+        "default": [
+          0.0,
+          0.4,
+          1.0,
+          0.0
+        ]
+      },
+      {
+        "name": "flash_color",
+        "type": "vec4",
+        "default": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    ],
+    "samplers": []
+  },
+  "FireworkSmoke": {
+    "name": "FireworkSmoke",
+    "framework_varying_schema": 2,
+    "domain": "surface",
+    "shading_model": "unlit",
+    "blending": "alpha",
+    "culling": "none",
+    "uniform_block": "MaterialParams",
+    "attributes": [],
+    "parameters": [
+      {
+        "name": "time",
+        "type": "float",
+        "default": 0.0
+      }
+    ],
+    "samplers": []
+  },
+  "LagoonWater": {
+    "name": "LagoonWater",
+    "framework_varying_schema": 2,
+    "domain": "surface",
+    "shading_model": "lit",
+    "blending": "opaque",
+    "culling": "back",
+    "engine_inputs": [
+      "planar_reflection"
+    ],
+    "uniform_block": "MaterialParams",
+    "attributes": [],
+    "parameters": [
+      {
+        "name": "deep_color",
+        "type": "vec4",
+        "default": [
+          0.004,
+          0.007,
+          0.018,
+          1.0
+        ],
+        "hint": {
+          "kind": "source_color"
+        }
+      },
+      {
+        "name": "time",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "streak",
+        "type": "float",
+        "default": 0.06,
+        "hint": {
+          "kind": "range",
+          "min": 0.0,
+          "max": 0.2,
+          "step": 0.001
+        }
+      },
+      {
+        "name": "wobble",
+        "type": "float",
+        "default": 0.004,
+        "hint": {
+          "kind": "range",
+          "min": 0.0,
+          "max": 0.02,
+          "step": 0.0005
+        }
+      },
+      {
+        "name": "reflectivity",
+        "type": "float",
+        "default": 0.85,
+        "hint": {
+          "kind": "range",
+          "min": 0.0,
+          "max": 2.0,
+          "step": 0.01
+        }
+      }
+    ],
+    "samplers": []
+  },
+  "LanternSkin": {
+    "name": "LanternSkin",
+    "framework_varying_schema": 2,
+    "domain": "surface",
+    "shading_model": "unlit",
+    "blending": "opaque",
+    "culling": "back",
+    "uniform_block": "MaterialParams",
+    "attributes": [],
+    "parameters": [
+      {
+        "name": "base_color",
+        "type": "vec4",
+        "default": [
+          0.45,
+          0.78,
+          1.0,
+          1.0
+        ],
+        "hint": {
+          "kind": "source_color"
+        }
+      },
+      {
+        "name": "rim_color",
+        "type": "vec4",
+        "default": [
+          0.55,
+          0.85,
+          1.0,
+          1.0
+        ],
+        "hint": {
+          "kind": "source_color"
+        }
+      },
+      {
+        "name": "inner_color",
+        "type": "vec4",
+        "default": [
+          0.75,
+          0.6,
+          1.0,
+          1.0
+        ],
+        "hint": {
+          "kind": "source_color"
+        }
+      },
+      {
+        "name": "light_direction",
+        "type": "vec3",
+        "default": [
+          -0.45,
+          0.75,
+          0.5
+        ]
+      },
+      {
+        "name": "glow",
+        "type": "float",
+        "default": 1.0,
+        "hint": {
+          "kind": "range",
+          "min": 0.0,
+          "max": 2.0,
+          "step": 0.01
+        }
+      },
+      {
+        "name": "rim_power",
+        "type": "float",
+        "default": 2.2,
+        "hint": {
+          "kind": "range",
+          "min": 0.5,
+          "max": 6.0,
+          "step": 0.1
+        }
+      },
+      {
+        "name": "translucency",
+        "type": "float",
+        "default": 0.0,
+        "hint": {
+          "kind": "range",
+          "min": 0.0,
+          "max": 1.0,
+          "step": 0.01
+        }
+      },
+      {
+        "name": "time",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "ambient_color",
+        "type": "vec4",
+        "default": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "name": "ambient_dir",
+        "type": "vec4",
+        "default": [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ]
+      }
+    ],
+    "samplers": []
+  },
+  "FriendToy": {
+    "name": "FriendToy",
+    "framework_varying_schema": 2,
+    "domain": "surface",
+    "shading_model": "unlit",
+    "blending": "opaque",
+    "culling": "back",
+    "uniform_block": "MaterialParams",
+    "attributes": [],
+    "parameters": [
+      {
+        "name": "base_color",
+        "type": "vec4",
+        "default": [
+          1.0,
+          0.36,
+          0.3,
+          1.0
+        ],
+        "hint": {
+          "kind": "source_color"
+        }
+      },
+      {
+        "name": "shade_color",
+        "type": "vec4",
+        "default": [
+          0.55,
+          0.12,
+          0.2,
+          1.0
+        ],
+        "hint": {
+          "kind": "source_color"
+        }
+      },
+      {
+        "name": "rim_color",
+        "type": "vec4",
+        "default": [
+          1.0,
+          0.85,
+          0.75,
+          1.0
+        ],
+        "hint": {
+          "kind": "source_color"
+        }
+      },
+      {
+        "name": "light_direction",
+        "type": "vec3",
+        "default": [
+          -0.45,
+          0.75,
+          0.5
+        ]
+      },
+      {
+        "name": "sss",
+        "type": "float",
+        "default": 0.5,
+        "hint": {
+          "kind": "range",
+          "min": 0.0,
+          "max": 1.0,
+          "step": 0.01
+        }
+      },
+      {
+        "name": "spec",
+        "type": "float",
+        "default": 1.0,
+        "hint": {
+          "kind": "range",
+          "min": 0.0,
+          "max": 3.0,
+          "step": 0.01
+        }
+      },
+      {
+        "name": "gloss",
+        "type": "float",
+        "default": 120.0,
+        "hint": {
+          "kind": "range",
+          "min": 4.0,
+          "max": 400.0,
+          "step": 1.0
+        }
+      },
+      {
+        "name": "rim",
+        "type": "float",
+        "default": 0.4,
+        "hint": {
+          "kind": "range",
+          "min": 0.0,
+          "max": 2.0,
+          "step": 0.01
+        }
+      },
+      {
+        "name": "core",
+        "type": "float",
+        "default": 0.2,
+        "hint": {
+          "kind": "range",
+          "min": 0.0,
+          "max": 1.0,
+          "step": 0.01
+        }
+      },
+      {
+        "name": "film",
+        "type": "float",
+        "default": 0.0,
+        "hint": {
+          "kind": "range",
+          "min": 0.0,
+          "max": 1.0,
+          "step": 0.01
+        }
+      },
+      {
+        "name": "emissive",
+        "type": "float",
+        "default": 0.0,
+        "hint": {
+          "kind": "range",
+          "min": 0.0,
+          "max": 6.0,
+          "step": 0.01
+        }
+      },
+      {
+        "name": "coat",
+        "type": "float",
+        "default": 0.0,
+        "hint": {
+          "kind": "range",
+          "min": 0.0,
+          "max": 2.0,
+          "step": 0.01
+        }
+      },
+      {
+        "name": "sss_color",
+        "type": "vec4",
+        "default": [
+          1.0,
+          0.6,
+          0.45,
+          1.0
+        ],
+        "hint": {
+          "kind": "source_color"
+        }
+      },
+      {
+        "name": "sss_edge",
+        "type": "float",
+        "default": 0.0,
+        "hint": {
+          "kind": "range",
+          "min": 0.0,
+          "max": 2.0,
+          "step": 0.01
+        }
+      },
+      {
+        "name": "sparkle",
+        "type": "float",
+        "default": 0.0,
+        "hint": {
+          "kind": "range",
+          "min": 0.0,
+          "max": 2.0,
+          "step": 0.01
+        }
+      },
+      {
+        "name": "fuzz",
+        "type": "float",
+        "default": 0.0,
+        "hint": {
+          "kind": "range",
+          "min": 0.0,
+          "max": 1.0,
+          "step": 0.01
+        }
+      },
+      {
+        "name": "time",
+        "type": "float",
+        "default": 0.0
+      },
+      {
+        "name": "glow",
+        "type": "float",
+        "default": 1.0,
+        "hint": {
+          "kind": "range",
+          "min": 0.0,
+          "max": 2.0,
+          "step": 0.01
+        }
+      },
+      {
+        "name": "ambient_color",
+        "type": "vec4",
+        "default": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "name": "ambient_dir",
+        "type": "vec4",
+        "default": [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ]
+      }
+    ],
+    "samplers": []
+  },
+  "GameVfx": {
+    "name": "GameVfx",
+    "framework_varying_schema": 2,
+    "domain": "surface",
+    "shading_model": "unlit",
+    "blending": "additive",
+    "culling": "none",
+    "depth_layer": 2,
+    "uniform_block": "MaterialParams",
+    "attributes": [],
+    "parameters": [
+      {
+        "name": "intensity",
+        "type": "float",
+        "default": 1.0,
+        "hint": {
+          "kind": "range",
+          "min": 0.0,
+          "max": 8.0,
+          "step": 0.01
+        }
+      }
+    ],
+    "samplers": []
+  },
+  "WindowSky": {
+    "name": "WindowSky",
+    "framework_varying_schema": 2,
+    "domain": "surface",
+    "shading_model": "unlit",
+    "blending": "opaque",
+    "culling": "none",
+    "uniform_block": "MaterialParams",
+    "attributes": [],
+    "parameters": [
+      {
+        "name": "top_color",
+        "type": "vec4",
+        "default": [
+          0.03,
+          0.05,
+          0.16,
+          1.0
+        ],
+        "hint": {
+          "kind": "source_color"
+        }
+      },
+      {
+        "name": "bottom_color",
+        "type": "vec4",
+        "default": [
+          0.12,
+          0.12,
+          0.32,
+          1.0
+        ],
+        "hint": {
+          "kind": "source_color"
+        }
+      },
+      {
+        "name": "moon",
+        "type": "vec4",
+        "default": [
+          0.62,
+          0.68,
+          0.16,
+          0.0
+        ]
+      },
+      {
+        "name": "time",
+        "type": "float",
+        "default": 0.0
+      }
+    ],
+    "samplers": []
+  }
+}
